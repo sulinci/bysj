@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cy.mapper.SalaryStandardMapper">
+
+    <resultMap id="SalaryStandard" type="com.cy.pojo.SalaryStandard">
+        <result column="eId" property="eId" />
+        <result column="soc_id" property="socId" />
+        <result column="base_salary" property="baseSalary" />
+        <result column="subsidy" property="subsidy" />
+        <result column="bonus" property="bonus" />
+        <result column="house_base" property="houseBase" />
+        <result column="social_base" property="socialBase" />
+    </resultMap>
+
+    <resultMap id="SalaryStandardVO" type="com.cy.pojo.vo.SalaryStandardVO">
+        <result column="eId" property="eId" />
+        <result column="workId" property="workId" />
+        <result column="name" property="name" />
+        <result column="depName" property="depName" />
+        <result column="standId" property="standId" />
+        <result column="soc_id" property="socId" />
+        <result column="base_salary" property="baseSalary" />
+        <result column="subsidy" property="subsidy" />
+        <result column="bonus" property="bonus" />
+        <result column="house_base" property="houseBase" />
+        <result column="social_base" property="socialBase" />
+    </resultMap>
+
+    <select id="getSalaryStandardByPage" resultMap="SalaryStandardVO">
+        select
+               e.id eId,e.work_id workId,e.name,d.name depName,sd.name socName,
+               ss.id standId,ss.soc_id,ss.base_salary,ss.subsidy,ss.bonus,
+               ss.house_base,ss.social_base
+        from
+             (t_employee e left join t_department d on e.dep_id = d.id)
+                 left join t_salary_standard ss on e.id = ss.e_id
+                 left join t_soc_dep sd on ss.soc_id = sd.id
+        where e.is_deleted = 0
+        <if test="name != null and '' != name ">
+            AND e.name like concat('%',#{name},'%')
+        </if>
+    </select>
+    <select id="getSalaryStandardByEId" resultMap="SalaryStandard">
+        select
+            e.id eId,e.work_id workId,e.name,d.name depName,sd.name socName,
+            ss.id standId,ss.soc_id,ss.base_salary,ss.subsidy,ss.bonus,
+            ss.house_base,ss.social_base
+        from
+            (t_employee e left join t_department d on e.dep_id = d.id)
+                left join t_salary_standard ss on e.id = ss.e_id
+                left join t_soc_dep sd on ss.soc_id = sd.id
+        where e.is_deleted = 0 and e.id = #{eId}
+    </select>
+    <select id="getStandards"  resultMap="SalaryStandardVO">
+        select
+        e.id eId,e.work_id workId,e.name,d.name depName,sd.name socName,
+        ss.id standId,ss.soc_id,ss.base_salary,ss.subsidy,ss.bonus,
+        ss.house_base,ss.social_base
+        from
+        (t_employee e left join t_department d on e.dep_id = d.id)
+        left join t_salary_standard ss on e.id = ss.e_id
+        left join t_soc_dep sd on ss.soc_id = sd.id
+        where e.is_deleted = 0
+        <if test="name != null and '' != name ">
+            AND e.name like concat('%',#{name},'%')
+        </if>
+    </select>
+</mapper>

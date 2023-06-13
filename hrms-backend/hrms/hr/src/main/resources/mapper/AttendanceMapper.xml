@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.mapper.AttendanceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.cy.pojo.Attendance">
+        <id column="id" property="id" />
+        <result column="e_id" property="eId" />
+        <result column="mor_time" property="morTime" />
+        <result column="aft_time" property="aftTime" />
+        <result column="attendance_date" property="attendanceDate" />
+        <result column="status" property="status" />
+    </resultMap>
+
+    <resultMap id="AttendanceInfo" type="com.cy.pojo.Attendance" extends="BaseResultMap">
+
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, e_id, mor_time, aft_time, attendance_date, status
+    </sql>
+
+    <select id="findByEmpId" resultType="com.cy.pojo.Attendance">
+        select
+               *
+        from
+             t_attendance
+        where
+            e_id = #{eId}
+        and
+            date_format(attendance_date,'%Y%m%d') = #{day}
+    </select>
+    <select id="countTimes" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            t_attendance
+        where
+            e_id = #{eId}
+          and status = #{status}
+          and date_format(attendance_date,'%Y%m') = #{month}
+    </select>
+    <select id="getAttendanceVOs" resultType="com.cy.pojo.vo.AttendanceVO">
+        select
+            e.id,e.name,e.work_id as workId,d.name as depName
+        from t_employee e,t_department d
+        where e.is_deleted = 0
+          and e.dep_id = d.id
+        <if test="name != null and '' != name ">
+            and e.name like concat('%',#{name},'%')
+        </if>
+    </select>
+
+</mapper>

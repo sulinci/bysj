@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.mapper.SalaryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.cy.pojo.Salary">
+        <id column="id" property="id" />
+        <id column="e_id" property="eId" />
+        <result column="basic_salary" property="basicSalary" />
+        <result column="subsidy" property="subsidy" />
+        <result column="bonus" property="bonus" />
+        <result column="late_deduct" property="lateDeduct" />
+        <result column="leave_early_deduct" property="leaveEarlyDeduct" />
+        <result column="absenteeism_deduct" property="absenteeismDeduct" />
+        <result column="leave_deduct" property="leaveDeduct" />
+        <result column="per_house_pay" property="perHousePay" />
+        <result column="com_house_pay" property="comHousePay" />
+        <result column="per_social_pay" property="perSocialPay" />
+        <result column="com_social_pay" property="comSocialPay" />
+        <result column="all_salary" property="allSalary" />
+        <result column="month" property="month" />
+    </resultMap>
+    <select id="getSalaryTable" resultMap="BaseResultMap">
+        select e.work_id as empWorkId, e.name as empName, d.name as depName, s.* from
+                      t_salary s left join t_employee e on s.e_id = e.id
+                          left join t_department d on e.dep_id = d.id
+        where
+            e.is_deleted = 0
+        <if test="name != null and '' != name ">
+            and e.name like concat('%',#{name},'%')
+        </if>
+        <if test="month != null and '' != month ">
+            and month = #{month}
+        </if>
+        ORDER BY month DESC,e.id
+    </select>
+
+    <select id="getSalaryByMonth" resultMap="BaseResultMap">
+        select e.work_id as empWorkId, e.name as empName, d.name as depName, s.* from
+        t_salary s left join t_employee e on s.e_id = e.id
+        left join t_department d on e.dep_id = d.id
+        where
+        e.is_deleted = 0
+        <if test="month != null and '' != month ">
+            and month = #{month}
+        </if>
+        ORDER BY month DESC
+    </select>
+
+
+
+</mapper>

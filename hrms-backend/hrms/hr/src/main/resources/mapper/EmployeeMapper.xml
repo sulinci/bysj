@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.mapper.EmployeeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.cy.pojo.Employee">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="work_id" property="workId" />
+        <result column="gender" property="gender" />
+        <result column="birthday" property="birthday" />
+        <result column="email" property="email" />
+        <result column="phone" property="phone" />
+        <result column="dep_id" property="depId" />
+        <result column="pos_id" property="posId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    
+    <resultMap id="EmployeeInfo" type="com.cy.pojo.Employee" extends="BaseResultMap">
+        <result column="depName" property="depName" />
+        <result column="posName" property="posName" />
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, gender, birthday, email, phone, dep_id, pos_id,work_id
+    </sql>
+
+    <!--获取所有员工（分页）-->
+    <select id="getEmployeeByPage" resultMap="EmployeeInfo">
+        select
+            e.*,
+            d.name as depName,
+            pos.name as posName
+        from
+            t_employee e,
+             t_department d,
+             t_position pos
+        where
+            e.is_deleted = 0
+            and e.dep_id = d.id
+            and e.pos_id = pos.id
+            <if test="employee.name != null and '' != employee.name ">
+                AND e.name like concat('%',#{employee.name},'%')
+            </if>
+            <if test="employee.posId != null" >
+                AND e.pos_id = #{employee.posId}
+            </if>
+            <if test="employee.depId != null">
+                AND e.dep_id = #{employee.depId}
+            </if>
+            ORDER BY e.id
+    </select>
+
+    <select id="getEmployee" resultMap="EmployeeInfo">
+        select
+        e.id
+        from
+        t_employee e
+        where
+        e.is_deleted = 0
+        ORDER BY e.id
+    </select>
+
+    <select id="selectEmpAtt" resultType="com.cy.pojo.Employee">
+        select
+            e.id,
+            e.name,
+            e.work_id as workId,
+            d.name as depName
+        from
+            t_employee e,
+            t_department d,
+            t_position pos
+        where
+            e.is_deleted = 0
+          and e.dep_id = d.id
+          and e.pos_id = pos.id
+        <if test="name != null and '' != name ">
+            AND e.name like concat('%',#{name},'%')
+        </if>
+        ORDER BY e.id
+    </select>
+
+    <select id="getEmployees" resultMap="EmployeeInfo">
+        select
+        e.*,
+        d.name as depName,
+        pos.name as posName
+        from
+        t_employee e,
+        t_department d,
+        t_position pos
+        where
+        e.is_deleted = 0
+        and e.dep_id = d.id
+        and e.pos_id = pos.id
+        <if test="name != null and '' != name ">
+            AND e.name like concat('%',#{name},'%')
+        </if>
+        ORDER BY e.id
+    </select>
+
+</mapper>
